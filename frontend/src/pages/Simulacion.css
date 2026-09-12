@@ -1,0 +1,159 @@
+.sim-pagina {
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 16px 48px;
+  font-family: inherit;
+  background: #111b21;
+  color: #e9edef;
+}
+
+.sim-error {
+  color: #f87171;
+}
+
+.sim-leccion {
+  max-width: 36rem;
+  margin-inline: auto;
+  background: #f7f4ee;
+  color: #14213d;
+  min-height: 100vh;
+}
+
+.sim-marca {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.sim-nota {
+  color: #4b5563;
+}
+
+.sim-boton {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sim-wa {
+  max-width: 28rem;
+  margin-inline: auto;
+  background: #0b141a;
+}
+
+.wa-barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #1f2c34;
+}
+
+.wa-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #00a884;
+}
+
+.wa-nombre {
+  margin: 0;
+  font-weight: 600;
+}
+
+.wa-estado {
+  margin: 0;
+  font-size: 13px;
+  color: #8696a0;
+}
+
+.wa-chat {
+  padding: 16px;
+  min-height: 40vh;
+  background: #0b141a;
+}
+
+.wa-burbuja {
+  display: grid;
+  gap: 8px;
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: 8px 8px 8px 2px;
+  background: #005c4b;
+}
+
+.wa-link,
+.sms-link {
+  border: 0;
+  background: none;
+  color: #53bdeb;
+  text-align: left;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.wa-form,
+.sms-form {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.wa-form input,
+.sms-form input,
+.sim-mail input {
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: inherit;
+  font: inherit;
+}
+
+.sim-sms {
+  max-width: 26rem;
+  margin-inline: auto;
+  background: #000;
+}
+
+.sms-barra {
+  padding: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.sms-burbuja {
+  margin: 16px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: #1c1c1e;
+}
+
+.sim-mail {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 48px 24px;
+  background: #f8fafc;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+.mail-de {
+  color: #475569;
+}
+
+.sim-mail input {
+  background: white;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}

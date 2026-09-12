@@ -11,10 +11,18 @@ import PanelWhatsapp from './pages/PanelWhatsapp.jsx'
 import PanelPdf from './pages/PanelPdf.jsx'
 import PanelCorreo from './pages/PanelCorreo.jsx'
 import Compartido from './pages/Compartido.jsx'
+import PanelEmpresa from './pages/PanelEmpresa.jsx'
+import PanelCampanas from './pages/PanelCampanas.jsx'
+import PanelTablero from './pages/PanelTablero.jsx'
+import Simulacion from './pages/Simulacion.jsx'
+import Reconocimiento from './pages/Reconocimiento.jsx'
 
 function App() {
   return (
     <Routes>
+      <Route path="simulacion/:token" element={<Simulacion />} />
+      <Route path="bien/:token" element={<Reconocimiento />} />
+
       <Route element={<Layout />}>
         <Route index element={<Landing />} />
         <Route path="empresas" element={<Empresas />} />
@@ -28,6 +36,9 @@ function App() {
           <Route path="whatsapp" element={<PanelWhatsapp />} />
           <Route path="pdf" element={<PanelPdf />} />
           <Route path="correo" element={<PanelCorreo />} />
+          <Route path="empresa" element={<PanelEmpresa />} />
+          <Route path="campanas" element={<PanelCampanas />} />
+          <Route path="tablero" element={<PanelTablero />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

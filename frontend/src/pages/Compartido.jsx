@@ -25,7 +25,7 @@ function Compartido() {
 
   if (error) {
     return (
-      <div className="compartido">
+      <div className="compartido panel-personas">
         <p className="panel-error">{error}</p>
         <Link to="/">Ir a SafeGuard</Link>
       </div>
@@ -35,7 +35,7 @@ function Compartido() {
   if (!ficha) return <p className="panel-estado">Abriendo el resultado…</p>
 
   return (
-    <div className="compartido">
+    <div className="compartido panel-personas">
       <header className="panel-header">
         <span className="panel-tag">SafeLink</span>
         <h1>Te mandaron este resultado</h1>

@@ -7,7 +7,10 @@ const titulos = {
 function Resultado({ nivel, subtitulo, motivos, children }) {
   return (
     <article className={`resultado nivel-${nivel}`}>
-      <p className="resultado-semaforo">{titulos[nivel]}</p>
+      <p className="resultado-semaforo">
+        <span className="resultado-punto" aria-hidden="true" />
+        {titulos[nivel]}
+      </p>
       {subtitulo && <p className="resultado-sub">{subtitulo}</p>}
       <ul className="resultado-motivos">
         {(motivos ?? []).map((motivo) => (

@@ -32,7 +32,7 @@ function PanelPdf() {
   }
 
   return (
-    <div className="panel">
+    <div className="panel panel-personas">
       <header className="panel-header">
         <Link className="panel-volver" to="/panel">
           ← Volver al panel

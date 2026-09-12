@@ -64,11 +64,21 @@ function Layout() {
       </main>
 
       <footer className="footer">
-        <div className="shell">
-          <p>
-            SafeGuard no reemplaza al antivirus ni al firewall: protege el
-            eslabón humano.
-          </p>
+        <div className="shell footer-inner">
+          <div>
+            <p className="footer-marca">SafeGuard</p>
+            <p>
+              No reemplaza al antivirus ni al firewall: protege el eslabón
+              humano.
+            </p>
+          </div>
+          <div className="footer-contacto">
+            <p className="footer-rotulo">Contacto</p>
+            <p className="footer-enlaces">
+              <span>WhatsApp Business</span>
+              <span>Correo</span>
+            </p>
+          </div>
         </div>
       </footer>
     </div>

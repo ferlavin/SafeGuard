@@ -2,6 +2,23 @@ import { Link } from 'react-router'
 import { useSesion } from '../lib/useSesion.js'
 import './Panel.css'
 
+const phishguard = [
+  {
+    to: '/panel/empresa',
+    titulo: 'Tu empresa',
+    texto: 'El alta y la lista de quienes van a recibir las simulaciones.',
+  },
+  {
+    to: '/panel/campanas',
+    titulo: 'Campañas',
+    texto: 'WhatsApp, SMS o mail. Quien cae recibe un refuerzo más difícil a las 3 semanas.',
+  },
+  {
+    to: '/panel/tablero',
+    titulo: 'Tablero del equipo',
+    texto: 'Cayó, no cayó, se capacitó, mejoró. Por persona y por área.',
+  },
+]
 const safelink = [
   {
     to: '/panel/enlaces',
@@ -37,16 +54,28 @@ function Panel() {
       <header className="panel-header">
         <h1>Hola, {nombre}</h1>
         <p className="panel-lead">
-          SafeLink revisa lo que te llega antes de que le des clic. El resultado
-          se puede mandar a alguien de confianza.
+          SafeLink revisa lo que te llega. PhishGuard entrena al equipo con las
+          mismas estafas, en el canal donde realmente llegan.
         </p>
       </header>
 
       <section className="panel-modulos">
-        <div>
+        <div className="panel-grupo panel-personas">
           <span className="panel-tag">SafeLink</span>
           <div className="panel-grid">
             {safelink.map((item) => (
+              <Link className="panel-card" to={item.to} key={item.to}>
+                <h3>{item.titulo}</h3>
+                <p>{item.texto}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="panel-grupo panel-empresas">
+          <span className="panel-tag">PhishGuard</span>
+          <div className="panel-grid">
+            {phishguard.map((item) => (
               <Link className="panel-card" to={item.to} key={item.to}>
                 <h3>{item.titulo}</h3>
                 <p>{item.texto}</p>

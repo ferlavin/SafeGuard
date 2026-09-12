@@ -7,8 +7,8 @@
   width: min(460px, 100%);
   padding: 32px;
   background: var(--sg-surface);
-  border: 1px solid color-mix(in srgb, var(--sg-navy) 12%, transparent);
-  border-radius: 12px;
+  border: 1px solid var(--sg-line);
+  border-radius: var(--sg-radius);
 }
 
 .acceso-caja h1 {
@@ -17,11 +17,11 @@
 
 .acceso-texto {
   margin-top: 8px;
-  color: color-mix(in srgb, var(--sg-navy) 68%, var(--sg-bg));
+  color: var(--sg-muted);
 }
 
 .acceso-estado {
-  color: color-mix(in srgb, var(--sg-navy) 60%, var(--sg-bg));
+  color: var(--sg-muted);
 }
 
 .boton-google {
@@ -33,20 +33,22 @@
   min-height: 44px;
   margin-top: 24px;
   padding: 0 20px;
-  border: 1px solid color-mix(in srgb, var(--sg-navy) 20%, transparent);
-  border-radius: 8px;
+  border: 1px solid var(--sg-line);
+  border-radius: var(--sg-radius-sm);
   background: var(--sg-surface);
-  color: var(--sg-navy);
+  color: var(--sg-text);
   font: inherit;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color var(--sg-ease),
+    background-color var(--sg-ease);
 }
 
 .boton-google:hover {
-  border-color: color-mix(in srgb, var(--sg-navy) 40%, transparent);
-  background: var(--sg-bg);
+  border-color: rgb(255 255 255 / 22%);
+  background: color-mix(in srgb, var(--sg-bg) 55%, var(--sg-surface));
 }
 
 .logo-google {
@@ -60,7 +62,7 @@
   gap: 12px;
   margin-top: 24px;
   font-size: 14px;
-  color: color-mix(in srgb, var(--sg-navy) 50%, var(--sg-bg));
+  color: var(--sg-muted);
 }
 
 .separador::before,
@@ -68,7 +70,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: color-mix(in srgb, var(--sg-navy) 12%, transparent);
+  background: var(--sg-line);
 }
 
 .acceso-pestanas {
@@ -77,7 +79,7 @@
   margin-top: 16px;
   padding: 4px;
   background: var(--sg-bg);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-sm);
 }
 
 .acceso-pestanas button {
@@ -85,17 +87,20 @@
   min-height: 40px;
   padding: 0 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
-  color: color-mix(in srgb, var(--sg-navy) 65%, var(--sg-bg));
+  color: var(--sg-muted);
   font: inherit;
   font-size: 15px;
   cursor: pointer;
+  transition:
+    background-color var(--sg-ease),
+    color var(--sg-ease);
 }
 
 .acceso-pestanas button.activa {
   background: var(--sg-surface);
-  color: var(--sg-navy);
+  color: var(--sg-text);
   font-weight: 500;
 }
 
@@ -118,16 +123,17 @@
 .acceso-form input {
   min-height: 44px;
   padding: 0 14px;
-  border: 1px solid color-mix(in srgb, var(--sg-navy) 20%, transparent);
-  border-radius: 8px;
-  background: var(--sg-surface);
-  color: var(--sg-navy);
+  border: 1px solid var(--sg-line);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-bg);
+  color: var(--sg-text);
   font: inherit;
   font-size: 16px;
+  transition: border-color var(--sg-ease);
 }
 
 .acceso-form input:focus {
-  border-color: var(--sg-blue);
+  border-color: color-mix(in srgb, var(--sg-teal) 55%, var(--sg-line));
 }
 
 .acceso-boton {
@@ -135,17 +141,18 @@
   margin-top: 8px;
   padding: 0 20px;
   border: none;
-  border-radius: 8px;
-  background: var(--sg-blue);
-  color: var(--sg-surface);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-teal);
+  color: var(--sg-text);
   font: inherit;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+  transition: background-color var(--sg-ease);
 }
 
 .acceso-boton:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--sg-blue) 88%, var(--sg-navy));
+  background: color-mix(in srgb, var(--sg-teal) 82%, white);
 }
 
 .acceso-boton:disabled {
@@ -157,16 +164,17 @@
 .acceso-aviso {
   margin-bottom: 16px;
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: var(--sg-radius-sm);
   font-size: 15px;
+  border: 1px solid var(--sg-line);
 }
 
 .acceso-error {
-  background: color-mix(in srgb, var(--sg-red) 10%, transparent);
-  color: color-mix(in srgb, var(--sg-red) 85%, var(--sg-navy));
+  background: color-mix(in srgb, var(--sg-red) 12%, var(--sg-surface));
+  color: color-mix(in srgb, var(--sg-red) 70%, var(--sg-text));
 }
 
 .acceso-aviso {
-  background: color-mix(in srgb, var(--sg-teal) 12%, transparent);
-  color: color-mix(in srgb, var(--sg-teal) 85%, var(--sg-navy));
+  background: color-mix(in srgb, var(--sg-teal) 12%, var(--sg-surface));
+  color: color-mix(in srgb, var(--sg-text) 88%, var(--sg-teal));
 }

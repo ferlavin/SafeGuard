@@ -1,16 +1,35 @@
 .hero {
+  position: relative;
+  isolation: isolate;
   max-width: 720px;
   margin-bottom: 48px;
 }
 
+.hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -28% -18% auto -12%;
+  height: 280px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 28% 42%,
+    color-mix(in srgb, var(--sg-teal) 14%, transparent),
+    transparent 68%
+  );
+}
+
 .hero h1 {
+  font-family: var(--sg-serif);
   font-size: 40px;
+  font-weight: 550;
+  letter-spacing: -0.025em;
 }
 
 .hero-text {
   margin-top: 16px;
   font-size: 18px;
-  color: color-mix(in srgb, var(--sg-navy) 68%, var(--sg-bg));
+  color: var(--sg-muted);
 }
 
 @media (max-width: 700px) {
@@ -42,49 +61,54 @@
   gap: 12px;
   padding: 32px;
   background: var(--sg-surface);
-  border: 1px solid color-mix(in srgb, var(--sg-navy) 12%, transparent);
-  border-top: 4px solid var(--door-accent);
-  border-radius: 12px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  border: 1px solid var(--sg-line);
+  border-top: 3px solid var(--door-accent);
+  border-radius: var(--sg-radius);
+  transition:
+    border-color var(--sg-ease),
+    color var(--sg-ease);
 }
 
 .door:hover {
-  border-color: color-mix(in srgb, var(--door-accent) 45%, transparent);
-  border-top-color: var(--door-accent);
-  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--door-accent) 42%, var(--sg-line));
+  border-top-color: color-mix(in srgb, var(--door-accent) 72%, white);
+}
+
+.door:focus-visible {
+  outline-color: var(--door-accent);
 }
 
 .door-empresas {
   --door-accent: var(--sg-blue);
+  --sg-accent: var(--sg-blue);
 }
 
 .door-personas {
   --door-accent: var(--sg-teal);
+  --sg-accent: var(--sg-teal);
 }
 
 .door-tag {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--door-accent) 12%, transparent);
-  color: var(--door-accent);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--door-accent);
 }
 
 .door-title {
-  font-size: 26px;
+  font-family: var(--sg-serif);
+  font-size: 28px;
+  font-weight: 550;
+  letter-spacing: -0.02em;
 }
 
 .door-text {
   font-size: 17px;
-  color: color-mix(in srgb, var(--sg-navy) 72%, var(--sg-bg));
+  color: color-mix(in srgb, var(--sg-text) 78%, var(--sg-muted));
 }
 
 .door-meta {
   font-size: 14px;
-  color: color-mix(in srgb, var(--sg-navy) 55%, var(--sg-bg));
+  color: var(--sg-muted);
 }
 
 .door-cta {
@@ -93,13 +117,14 @@
   min-height: 44px;
   margin-top: 12px;
   padding: 0 20px;
-  border-radius: 8px;
+  border-radius: var(--sg-radius-sm);
   background: var(--door-accent);
-  color: var(--sg-surface);
+  color: var(--sg-text);
   font-size: 16px;
   font-weight: 500;
+  transition: background-color var(--sg-ease);
 }
 
 .door:hover .door-cta {
-  background: color-mix(in srgb, var(--door-accent) 88%, var(--sg-navy));
+  background: color-mix(in srgb, var(--door-accent) 82%, white);
 }
