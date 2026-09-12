@@ -1,0 +1,105 @@
+.hero {
+  max-width: 720px;
+  margin-bottom: 48px;
+}
+
+.hero h1 {
+  font-size: 40px;
+}
+
+.hero-text {
+  margin-top: 16px;
+  font-size: 18px;
+  color: color-mix(in srgb, var(--sg-navy) 68%, var(--sg-bg));
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .hero-text {
+    font-size: 17px;
+  }
+}
+
+.doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 820px) {
+  .doors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.door {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 32px;
+  background: var(--sg-surface);
+  border: 1px solid color-mix(in srgb, var(--sg-navy) 12%, transparent);
+  border-top: 4px solid var(--door-accent);
+  border-radius: 12px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.door:hover {
+  border-color: color-mix(in srgb, var(--door-accent) 45%, transparent);
+  border-top-color: var(--door-accent);
+  transform: translateY(-2px);
+}
+
+.door-empresas {
+  --door-accent: var(--sg-blue);
+}
+
+.door-personas {
+  --door-accent: var(--sg-teal);
+}
+
+.door-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--door-accent) 12%, transparent);
+  color: var(--door-accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.door-title {
+  font-size: 26px;
+}
+
+.door-text {
+  font-size: 17px;
+  color: color-mix(in srgb, var(--sg-navy) 72%, var(--sg-bg));
+}
+
+.door-meta {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--sg-navy) 55%, var(--sg-bg));
+}
+
+.door-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: var(--door-accent);
+  color: var(--sg-surface);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.door:hover .door-cta {
+  background: color-mix(in srgb, var(--door-accent) 88%, var(--sg-navy));
+}

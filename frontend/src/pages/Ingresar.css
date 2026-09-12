@@ -1,0 +1,172 @@
+.acceso {
+  display: flex;
+  justify-content: center;
+}
+
+.acceso-caja {
+  width: min(460px, 100%);
+  padding: 32px;
+  background: var(--sg-surface);
+  border: 1px solid color-mix(in srgb, var(--sg-navy) 12%, transparent);
+  border-radius: 12px;
+}
+
+.acceso-caja h1 {
+  font-size: 26px;
+}
+
+.acceso-texto {
+  margin-top: 8px;
+  color: color-mix(in srgb, var(--sg-navy) 68%, var(--sg-bg));
+}
+
+.acceso-estado {
+  color: color-mix(in srgb, var(--sg-navy) 60%, var(--sg-bg));
+}
+
+.boton-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 24px;
+  padding: 0 20px;
+  border: 1px solid color-mix(in srgb, var(--sg-navy) 20%, transparent);
+  border-radius: 8px;
+  background: var(--sg-surface);
+  color: var(--sg-navy);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.boton-google:hover {
+  border-color: color-mix(in srgb, var(--sg-navy) 40%, transparent);
+  background: var(--sg-bg);
+}
+
+.logo-google {
+  width: 18px;
+  height: 18px;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--sg-navy) 50%, var(--sg-bg));
+}
+
+.separador::before,
+.separador::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: color-mix(in srgb, var(--sg-navy) 12%, transparent);
+}
+
+.acceso-pestanas {
+  display: flex;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 4px;
+  background: var(--sg-bg);
+  border-radius: 8px;
+}
+
+.acceso-pestanas button {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: color-mix(in srgb, var(--sg-navy) 65%, var(--sg-bg));
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.acceso-pestanas button.activa {
+  background: var(--sg-surface);
+  color: var(--sg-navy);
+  font-weight: 500;
+}
+
+.acceso-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.acceso-form label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.acceso-form label + input {
+  margin-bottom: 16px;
+}
+
+.acceso-form input {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--sg-navy) 20%, transparent);
+  border-radius: 8px;
+  background: var(--sg-surface);
+  color: var(--sg-navy);
+  font: inherit;
+  font-size: 16px;
+}
+
+.acceso-form input:focus {
+  border-color: var(--sg-blue);
+}
+
+.acceso-boton {
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--sg-blue);
+  color: var(--sg-surface);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.acceso-boton:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--sg-blue) 88%, var(--sg-navy));
+}
+
+.acceso-boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.acceso-error,
+.acceso-aviso {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.acceso-error {
+  background: color-mix(in srgb, var(--sg-red) 10%, transparent);
+  color: color-mix(in srgb, var(--sg-red) 85%, var(--sg-navy));
+}
+
+.acceso-aviso {
+  background: color-mix(in srgb, var(--sg-teal) 12%, transparent);
+  color: color-mix(in srgb, var(--sg-teal) 85%, var(--sg-navy));
+}
