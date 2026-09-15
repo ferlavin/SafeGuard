@@ -246,14 +246,22 @@ function PanelCampanas() {
         body: { campana_id: id, origen: window.location.origin },
       },
     )
-    if (falloMail || mail?.ok === false) {
+    const detalle =
+      mail?.error ??
+      (typeof mail === 'string' ? mail : null) ??
+      falloMail?.context?.error ??
+      falloMail?.message
+    if (mail?.ok === true) {
       setAviso(
-        `La campaña se creó. No se pudo enviar el correo a ${sesion?.user?.email ?? 'tu cuenta'}: ${
-          mail?.error ?? falloMail?.message ?? 'revisá la configuración de correo'
-        }. Copiá los enlaces de abajo.`,
+        mail.aviso ??
+          `Te enviamos un correo a ${mail.destino ?? sesion?.user?.email} con los enlaces de la campaña.`,
       )
     } else {
-      setAviso(`Te enviamos un correo a ${sesion?.user?.email} con los enlaces de la campaña.`)
+      setError(
+        `La campaña se creó, pero el correo no salió${
+          sesion?.user?.email ? ` a ${sesion.user.email}` : ''
+        }: ${detalle || 'Resend no aceptó el envío'}. Revisá spam y que el secreto se llame RESEND_API_KEY. Mientras tanto, copiá los enlaces de abajo.`,
+      )
     }
   }
 

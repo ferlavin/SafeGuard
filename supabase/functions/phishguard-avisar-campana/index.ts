@@ -4,11 +4,12 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-function json(cuerpo: unknown, status = 200) {
+function json(cuerpo: unknown) {
   return new Response(JSON.stringify(cuerpo), {
-    status,
+    status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 }
@@ -32,6 +33,25 @@ function origenSeguro(valor: unknown) {
   }
 }
 
+function clavePublica() {
+  const directa =
+    Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? ''
+  if (directa) return directa
+  try {
+    const keys = JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS') ?? '{}') as Record<
+      string,
+      string
+    >
+    return keys.default ?? Object.values(keys)[0] ?? ''
+  } catch {
+    return ''
+  }
+}
+
+function emailDePrueba(mensaje: string) {
+  return mensaje.match(/\(([^)\s]+@[^)\s]+)\)/)?.[1] ?? ''
+}
+
 function mensajeSimulacion(
   canal: string,
   plantilla: {
@@ -50,6 +70,19 @@ function mensajeSimulacion(
   return cuerpo
 }
 
+async function mandarResend(apiKey: string, from: string, to: string, subject: string, html: string) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ from, to: [to], subject, html }),
+  })
+  const data = (await res.json()) as { id?: string; message?: string; name?: string }
+  return { ok: res.ok, status: res.status, data }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -57,13 +90,11 @@ Deno.serve(async (req) => {
 
   try {
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader) return json({ ok: false, error: 'Tenés que entrar' }, 401)
+    if (!authHeader) return json({ ok: false, error: 'Tenés que entrar' })
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } },
-    )
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', clavePublica(), {
+      global: { headers: { Authorization: authHeader } },
+    })
 
     const {
       data: { user },
@@ -71,41 +102,52 @@ Deno.serve(async (req) => {
     } = await supabase.auth.getUser()
 
     if (falloUser || !user?.email) {
-      return json({ ok: false, error: 'No hay sesión' }, 401)
+      return json({ ok: false, error: 'No hay sesión para saber a quién mandar el correo' })
     }
 
     const cuerpoReq = await req.json().catch(() => ({}))
     const campanaId = typeof cuerpoReq?.campana_id === 'string' ? cuerpoReq.campana_id : ''
     const origen = origenSeguro(cuerpoReq?.origen)
 
-    if (!campanaId) return json({ ok: false, error: 'Falta la campaña' }, 400)
-    if (!origen) return json({ ok: false, error: 'Falta la dirección de la app' }, 400)
+    if (!campanaId) return json({ ok: false, error: 'Falta la campaña' })
+    if (!origen) return json({ ok: false, error: 'Falta la dirección de la app' })
 
     const { data: campana, error: falloCampana } = await supabase
       .from('campanas')
-      .select(
-        'id, nombre_campana, canal, plantillas_phishing(titulo, asunto_mail, remitente_falso, cuerpo_html), eventos_simulacion(token_unico, empleados(nombre, email))',
-      )
+      .select('id, nombre_campana, canal, plantilla_id')
       .eq('id', campanaId)
       .maybeSingle()
 
     if (falloCampana || !campana) {
-      return json({ ok: false, error: falloCampana?.message ?? 'No se encontró la campaña' }, 404)
+      return json({
+        ok: false,
+        error: falloCampana?.message ?? 'No se encontró la campaña',
+      })
     }
+
+    const [{ data: plantilla }, { data: eventos }] = await Promise.all([
+      campana.plantilla_id
+        ? supabase
+            .from('plantillas_phishing')
+            .select('titulo, asunto_mail, remitente_falso, cuerpo_html')
+            .eq('id', campana.plantilla_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from('eventos_simulacion')
+        .select('token_unico, empleados(nombre, email)')
+        .eq('campana_id', campanaId),
+    ])
 
     const apiKey = Deno.env.get('RESEND_API_KEY')
     if (!apiKey) {
       return json({
         ok: false,
-        error: 'Falta configurar RESEND_API_KEY en los secretos de Supabase.',
+        error: 'Falta el secreto RESEND_API_KEY en Supabase → Edge Functions → Secrets.',
       })
     }
 
-    const plantilla = Array.isArray(campana.plantillas_phishing)
-      ? campana.plantillas_phishing[0]
-      : campana.plantillas_phishing
-    const eventos = campana.eventos_simulacion ?? []
-    const filas = eventos
+    const filas = (eventos ?? [])
       .map((ev: { token_unico: string; empleados: { nombre?: string; email?: string } | null }) => {
         const persona = ev.empleados
         const sim = `${origen}/simulacion/${ev.token_unico}`
@@ -129,33 +171,65 @@ Deno.serve(async (req) => {
     `
 
     const from = Deno.env.get('RESEND_FROM') ?? 'SafeGuard <beth.t@example.com>'
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        from,
-        to: [user.email],
-        subject: `Campaña lista: ${campana.nombre_campana}`,
-        html,
-      }),
-    })
+    const destinoForzado = Deno.env.get('RESEND_TO') ?? ''
+    const destinos = [destinoForzado || user.email]
 
-    const data = await res.json()
-    if (!res.ok) {
+    let envio = await mandarResend(
+      apiKey,
+      from,
+      destinos[0],
+      `Campaña lista: ${campana.nombre_campana}`,
+      html,
+    )
+
+    if (!envio.ok) {
+      const permitido = emailDePrueba(envio.data.message ?? '')
+      if (permitido && permitido.toLowerCase() !== destinos[0].toLowerCase()) {
+        console.log(`resend_reintento hacia ${permitido}`)
+        envio = await mandarResend(
+          apiKey,
+          from,
+          permitido,
+          `Campaña lista: ${campana.nombre_campana}`,
+          html,
+        )
+        if (envio.ok) {
+          return json({
+            ok: true,
+            destino: permitido,
+            aviso: `Resend está en modo prueba: el correo salió a ${permitido}, no a ${user.email}.`,
+          })
+        }
+      }
+    }
+
+    console.log(
+      JSON.stringify({
+        tiene_key: true,
+        destino: destinos[0],
+        usuario: user.email,
+        campana: campanaId,
+        resend_status: envio.status,
+      }),
+    )
+
+    if (!envio.ok) {
+      const crudo = envio.data.message ?? 'Resend rechazó el correo'
+      const prueba = /testing emails|own email/i.test(crudo)
       return json({
         ok: false,
-        error: data?.message ?? 'Resend rechazó el correo',
+        error: prueba
+          ? `Resend en modo prueba solo entrega al mail de la cuenta de Resend. ${crudo}`
+          : crudo,
       })
     }
 
-    return json({ ok: true })
+    return json({ ok: true, destino: destinos[0] })
   } catch (error) {
-    return json(
-      { ok: false, error: error instanceof Error ? error.message : 'No se pudo avisar' },
-      400,
-    )
+    console.error(error)
+    return json({
+      ok: false,
+      error: error instanceof Error ? error.message : 'No se pudo avisar',
+    })
   }
 })
