@@ -49,6 +49,21 @@ function textoBien(ev) {
   return `${saludo}esto era una simulación de PhishGuard. No tenías que tocar el enlace. La explicación está acá: ${enlace(ev.token_unico, 'bien')}`
 }
 
+function textoKit(campana) {
+  const evs = campana.eventos_simulacion ?? []
+  return [
+    `Campaña: ${campana.nombre_campana}`,
+    `Canal: ${campana.canal}`,
+    '',
+    ...evs.flatMap((ev) => [
+      ev.empleados?.nombre ?? 'Empleado',
+      `Simulación: ${enlace(ev.token_unico, 'sim')}`,
+      `Lo hiciste bien: ${enlace(ev.token_unico, 'bien')}`,
+      '',
+    ]),
+  ].join('\n')
+}
+
 function metricas(eventos) {
   const total = eventos.length
   const clic = eventos.filter((e) => e.hizo_clic).length
@@ -154,6 +169,7 @@ function PanelCampanas() {
   const [creando, setCreando] = useState(false)
   const [abierta, setAbierta] = useState(null)
   const [copiado, setCopiado] = useState(null)
+  const [mailtoKit, setMailtoKit] = useState(null)
 
   const visibles = useMemo(
     () => plantillas.filter((p) => p.canal === canal || p.canal === 'todos'),
@@ -198,6 +214,7 @@ function PanelCampanas() {
     evento.preventDefault()
     setError(null)
     setAviso(null)
+    setMailtoKit(null)
     if (elegidos.length === 0) {
       setError('Elegí al menos un empleado.')
       return
@@ -240,27 +257,27 @@ function PanelCampanas() {
       return
     }
 
-    const { data: mail, error: falloMail } = await supabase.functions.invoke(
+    const { data: mail } = await supabase.functions.invoke(
       'phishguard-avisar-campana',
       {
         body: { campana_id: id, origen: window.location.origin },
       },
     )
-    const detalle =
-      mail?.error ??
-      (typeof mail === 'string' ? mail : null) ??
-      falloMail?.context?.error ??
-      falloMail?.message
     if (mail?.ok === true) {
       setAviso(
         mail.aviso ??
           `Te enviamos un correo a ${mail.destino ?? sesion?.user?.email} con los enlaces de la campaña.`,
       )
     } else {
+      const creada = estado.campanas.find((c) => c.id === id)
+      const correo = sesion?.user?.email ?? ''
+      if (creada && correo) {
+        setMailtoKit(
+          `mailto:${correo}?subject=${encodeURIComponent(`Campaña lista: ${creada.nombre_campana}`)}&body=${encodeURIComponent(textoKit(creada))}`,
+        )
+      }
       setError(
-        `La campaña se creó, pero el correo no salió${
-          sesion?.user?.email ? ` a ${sesion.user.email}` : ''
-        }: ${detalle || 'Resend no aceptó el envío'}. Revisá spam y que el secreto se llame RESEND_API_KEY. Mientras tanto, copiá los enlaces de abajo.`,
+        `La campaña se creó, pero el correo no salió a ${correo || 'tu cuenta'}: Resend es de pago (hay que verificar un dominio propio; el plan gratis no alcanza). Abrí tu correo con el botón o copiá los enlaces de la lista.`,
       )
     }
   }
@@ -319,10 +336,22 @@ function PanelCampanas() {
           El CEO fraudulento y el paquete retenido se simulan por WhatsApp o SMS.
           Quien cae recibe un refuerzo más difícil a las 3 semanas.
         </p>
+        <p className="panel-aviso">
+          El correo automático al crear una campaña no sale con la cuenta gratis de
+          Resend: hay que pagar un dominio propio y verificarlo. Mientras tanto, los
+          enlaces quedan en el listado.
+        </p>
       </header>
 
       {error && <p className="panel-error">{error}</p>}
       {aviso && <p className="panel-aviso">{aviso}</p>}
+      {mailtoKit && (
+        <div className="panel-acciones">
+          <a className="panel-boton" href={mailtoKit}>
+            Abrir mi correo con los enlaces
+          </a>
+        </div>
+      )}
 
       {empleados.length === 0 ? (
         <p className="panel-vacio">

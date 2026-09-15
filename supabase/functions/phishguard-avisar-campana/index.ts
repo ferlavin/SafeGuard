@@ -48,10 +48,6 @@ function clavePublica() {
   }
 }
 
-function emailDePrueba(mensaje: string) {
-  return mensaje.match(/\(([^)\s]+@[^)\s]+)\)/)?.[1] ?? ''
-}
-
 function mensajeSimulacion(
   canal: string,
   plantilla: {
@@ -68,6 +64,10 @@ function mensajeSimulacion(
     return `De: ${de}\nAsunto: ${asunto}\n\n${cuerpo}`
   }
   return cuerpo
+}
+
+function remitente() {
+  return 'beth.t@example.com'
 }
 
 async function mandarResend(apiKey: string, from: string, to: string, subject: string, html: string) {
@@ -170,44 +170,21 @@ Deno.serve(async (req) => {
       </table>
     `
 
-    const from = Deno.env.get('RESEND_FROM') ?? 'SafeGuard <beth.t@example.com>'
-    const destinoForzado = Deno.env.get('RESEND_TO') ?? ''
-    const destinos = [destinoForzado || user.email]
+    const from = remitente()
+    const destino = user.email
 
-    let envio = await mandarResend(
+    const envio = await mandarResend(
       apiKey,
       from,
-      destinos[0],
+      destino,
       `Campaña lista: ${campana.nombre_campana}`,
       html,
     )
 
-    if (!envio.ok) {
-      const permitido = emailDePrueba(envio.data.message ?? '')
-      if (permitido && permitido.toLowerCase() !== destinos[0].toLowerCase()) {
-        console.log(`resend_reintento hacia ${permitido}`)
-        envio = await mandarResend(
-          apiKey,
-          from,
-          permitido,
-          `Campaña lista: ${campana.nombre_campana}`,
-          html,
-        )
-        if (envio.ok) {
-          return json({
-            ok: true,
-            destino: permitido,
-            aviso: `Resend está en modo prueba: el correo salió a ${permitido}, no a ${user.email}.`,
-          })
-        }
-      }
-    }
-
     console.log(
       JSON.stringify({
-        tiene_key: true,
-        destino: destinos[0],
-        usuario: user.email,
+        destino,
+        from,
         campana: campanaId,
         resend_status: envio.status,
       }),
@@ -215,16 +192,17 @@ Deno.serve(async (req) => {
 
     if (!envio.ok) {
       const crudo = envio.data.message ?? 'Resend rechazó el correo'
-      const prueba = /testing emails|own email/i.test(crudo)
+      const bloqueo =
+        /testing emails|own email|resend\.dev|domain is not verified|example\.com/i.test(crudo)
       return json({
         ok: false,
-        error: prueba
-          ? `Resend en modo prueba solo entrega al mail de la cuenta de Resend. ${crudo}`
+        error: bloqueo
+          ? `Resend es de pago para enviar correos. El plan gratis no manda a ${destino}: hace falta un dominio propio verificado (no Da Vinci ni example.com).`
           : crudo,
       })
     }
 
-    return json({ ok: true, destino: destinos[0] })
+    return json({ ok: true, destino })
   } catch (error) {
     console.error(error)
     return json({
