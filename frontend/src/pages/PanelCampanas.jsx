@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
+import { copiarTexto } from '../lib/copiar.js'
 import { supabase } from '../lib/supabase.js'
+import { useSesion } from '../lib/useSesion.js'
 import './Panel.css'
 
 const CANALES = [
@@ -24,8 +26,27 @@ function enlace(token, tipo) {
   return tipo === 'bien' ? `${base}/bien/${token}` : `${base}/simulacion/${token}`
 }
 
-function copiar(texto) {
-  return navigator.clipboard.writeText(texto)
+function plantillaDe(campana) {
+  const p = campana.plantillas_phishing
+  return Array.isArray(p) ? p[0] : p
+}
+
+function textoSimulacion(campana, token) {
+  const plantilla = plantillaDe(campana)
+  const link = enlace(token, 'sim')
+  const cuerpo = (plantilla?.cuerpo_html ?? 'Entrá acá: {link}').replaceAll('{link}', link)
+  if (campana.canal === 'email') {
+    const de = plantilla?.remitente_falso ? `De: ${plantilla.remitente_falso}\n` : ''
+    const asunto = plantilla?.asunto_mail ? `Asunto: ${plantilla.asunto_mail}\n\n` : ''
+    return `${de}${asunto}${cuerpo}`
+  }
+  return cuerpo
+}
+
+function textoBien(ev) {
+  const nombre = (ev.empleados?.nombre ?? '').split(' ')[0]
+  const saludo = nombre ? `${nombre}, ` : ''
+  return `${saludo}esto era una simulación de PhishGuard. No tenías que tocar el enlace. La explicación está acá: ${enlace(ev.token_unico, 'bien')}`
 }
 
 function metricas(eventos) {
@@ -102,7 +123,7 @@ async function cargar() {
     supabase
       .from('campanas')
       .select(
-        'id, nombre_campana, estado, canal, es_refuerzo, fecha_inicio, creado_en, plantilla_id, extra, eventos_simulacion(id, token_unico, hizo_clic, ingreso_datos, completo_capacitacion, vio_reconocimiento, empleados(nombre, email, departamento))',
+        'id, nombre_campana, estado, canal, es_refuerzo, fecha_inicio, creado_en, plantilla_id, extra, plantillas_phishing(titulo, asunto_mail, remitente_falso, cuerpo_html), eventos_simulacion(id, token_unico, hizo_clic, ingreso_datos, completo_capacitacion, vio_reconocimiento, empleados(nombre, email, departamento))',
       )
       .order('creado_en', { ascending: false }),
   ])
@@ -117,6 +138,7 @@ async function cargar() {
 }
 
 function PanelCampanas() {
+  const { sesion } = useSesion()
   const [organizacion, setOrganizacion] = useState(null)
   const [plantillas, setPlantillas] = useState([])
   const [empleados, setEmpleados] = useState([])
@@ -131,6 +153,7 @@ function PanelCampanas() {
   const [elegidos, setElegidos] = useState([])
   const [creando, setCreando] = useState(false)
   const [abierta, setAbierta] = useState(null)
+  const [copiado, setCopiado] = useState(null)
 
   const visibles = useMemo(
     () => plantillas.filter((p) => p.canal === canal || p.canal === 'todos'),
@@ -174,6 +197,7 @@ function PanelCampanas() {
   async function crearCampana(evento) {
     evento.preventDefault()
     setError(null)
+    setAviso(null)
     if (elegidos.length === 0) {
       setError('Elegí al menos un empleado.')
       return
@@ -213,7 +237,36 @@ function PanelCampanas() {
     setAbierta(id)
     if (falloEventos) {
       setError(`La campaña quedó creada pero no se generaron los enlaces: ${falloEventos.message}`)
+      return
     }
+
+    const { data: mail, error: falloMail } = await supabase.functions.invoke(
+      'phishguard-avisar-campana',
+      {
+        body: { campana_id: id, origen: window.location.origin },
+      },
+    )
+    if (falloMail || mail?.ok === false) {
+      setAviso(
+        `La campaña se creó. No se pudo enviar el correo a ${sesion?.user?.email ?? 'tu cuenta'}: ${
+          mail?.error ?? falloMail?.message ?? 'revisá la configuración de correo'
+        }. Copiá los enlaces de abajo.`,
+      )
+    } else {
+      setAviso(`Te enviamos un correo a ${sesion?.user?.email} con los enlaces de la campaña.`)
+    }
+  }
+
+  async function copiarYMarcar(clave, texto) {
+    const ok = await copiarTexto(texto)
+    if (!ok) {
+      setError('No se pudo copiar. Seleccioná el texto y copialo a mano.')
+      return
+    }
+    setCopiado(clave)
+    window.setTimeout(() => {
+      setCopiado((actual) => (actual === clave ? null : actual))
+    }, 2000)
   }
 
   async function lanzarRefuerzo(id) {
@@ -397,18 +450,22 @@ function PanelCampanas() {
                               <div className="panel-acciones">
                                 <button
                                   type="button"
-                                  className="panel-boton-borde"
-                                  onClick={() => copiar(enlace(ev.token_unico, 'sim'))}
+                                  className="panel-boton panel-boton-borde"
+                                  onClick={() =>
+                                    copiarYMarcar(`${ev.id}-sim`, textoSimulacion(campana, ev.token_unico))
+                                  }
                                 >
-                                  Copiar simulación
+                                  {copiado === `${ev.id}-sim` ? 'Copiado' : 'Copiar simulación'}
                                 </button>
                                 {!ev.hizo_clic && (
                                   <button
                                     type="button"
-                                    className="panel-boton-borde"
-                                    onClick={() => copiar(enlace(ev.token_unico, 'bien'))}
+                                    className="panel-boton panel-boton-borde"
+                                    onClick={() => copiarYMarcar(`${ev.id}-bien`, textoBien(ev))}
                                   >
-                                    Copiar “lo hiciste bien”
+                                    {copiado === `${ev.id}-bien`
+                                      ? 'Copiado'
+                                      : 'Copiar “lo hiciste bien”'}
                                   </button>
                                 )}
                               </div>

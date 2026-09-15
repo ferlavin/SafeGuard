@@ -2,13 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { useSesion } from '../lib/useSesion.js'
 import { analizarWhatsapp, cerrarWhatsapp } from '../lib/analisisWhatsapp.js'
-import {
-  compartirResultado,
-  consultarAmenaza,
-  enriquecer,
-  guardarAnalisis,
-  reportarDominio,
-} from '../lib/enriquecer.js'
+import { consultarAmenaza, enriquecer, guardarAnalisis, reportarDominio } from '../lib/enriquecer.js'
 import Resultado from '../components/Resultado.jsx'
 import './Panel.css'
 
@@ -56,12 +50,6 @@ function PanelWhatsapp() {
     else setCierre(data.cierre)
   }
 
-  async function compartir() {
-    if (!resultado) return
-    const r = await compartirResultado(resultado)
-    if (r.error) setError(r.error)
-  }
-
   return (
     <div className="panel panel-personas">
       <header className="panel-header">
@@ -102,20 +90,17 @@ function PanelWhatsapp() {
           }
           motivos={resultado.motivos}
         >
-          <div className="panel-acciones">
-            {resultado.nivel !== 'verde' &&
-              resultado.dominio !== 'whatsapp' &&
-              (cierre ? (
+          {resultado.nivel !== 'verde' && resultado.dominio !== 'whatsapp' && (
+            <div className="panel-acciones">
+              {cierre ? (
                 <p className="resultado-aviso">{cierre}</p>
               ) : (
                 <button type="button" className="panel-boton panel-boton-borde" onClick={reportar}>
                   Reportar este sitio
                 </button>
-              ))}
-            <button type="button" className="panel-boton" onClick={compartir}>
-              Mandale esto a tu mamá
-            </button>
-          </div>
+              )}
+            </div>
+          )}
         </Resultado>
       )}
     </div>

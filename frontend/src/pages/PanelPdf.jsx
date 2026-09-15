@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { useSesion } from '../lib/useSesion.js'
 import { analizarPdf } from '../lib/analisisPdf.js'
-import { compartirResultado, guardarAnalisis } from '../lib/enriquecer.js'
+import { guardarAnalisis } from '../lib/enriquecer.js'
 import Resultado from '../components/Resultado.jsx'
 import './Panel.css'
 
@@ -51,13 +51,7 @@ function PanelPdf() {
       {error && <p className="panel-error">{error}</p>}
 
       {resultado && (
-        <Resultado nivel={resultado.nivel} subtitulo={resultado.nombre} motivos={resultado.motivos}>
-          <div className="panel-acciones">
-            <button type="button" className="panel-boton" onClick={() => compartirResultado(resultado)}>
-              Mandale esto a tu mamá
-            </button>
-          </div>
-        </Resultado>
+        <Resultado nivel={resultado.nivel} subtitulo={resultado.nombre} motivos={resultado.motivos} />
       )}
     </div>
   )

@@ -451,20 +451,47 @@
   overflow-x: auto;
 }
 
-.tablero {
+.tabla-equipo {
   width: 100%;
   border-collapse: collapse;
 }
 
-.tablero th,
-.tablero td {
+.tabla-equipo th,
+.tabla-equipo td {
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--sg-line);
 }
 
-.tablero th {
+.tabla-equipo th {
   color: var(--sg-muted);
   font-size: 14px;
   font-weight: 600;
+}
+
+.tablero-kpis {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.tablero-kpis li {
+  padding: 16px;
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-surface);
+  border: 1px solid var(--sg-line);
+}
+
+.tablero-kpis strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.tablero-kpis span {
+  color: var(--sg-muted);
+  font-size: 14px;
 }

@@ -3,13 +3,7 @@ import { Link } from 'react-router'
 import { supabase } from '../lib/supabase.js'
 import { useSesion } from '../lib/useSesion.js'
 import { analizar, combinarConAmenaza, combinarConEnriquecimiento } from '../lib/analisis.js'
-import {
-  compartirResultado,
-  consultarAmenaza,
-  enriquecer,
-  guardarAnalisis,
-  reportarDominio,
-} from '../lib/enriquecer.js'
+import { consultarAmenaza, enriquecer, guardarAnalisis, reportarDominio } from '../lib/enriquecer.js'
 import Resultado from '../components/Resultado.jsx'
 import './Panel.css'
 
@@ -139,13 +133,6 @@ function PanelEnlaces() {
     ])
   }
 
-  async function compartir() {
-    if (!resultado) return
-    setError(null)
-    const r = await compartirResultado(resultado)
-    if (r.error) setError(r.error)
-  }
-
   return (
     <div className="panel panel-personas">
       <header className="panel-header">
@@ -185,19 +172,17 @@ function PanelEnlaces() {
           subtitulo={resultado.dominioDestino ?? resultado.dominio}
           motivos={resultado.motivos}
         >
-          <div className="panel-acciones">
-            {resultado.nivel !== 'verde' &&
-              (cierre ? (
+          {resultado.nivel !== 'verde' && (
+            <div className="panel-acciones">
+              {cierre ? (
                 <p className="resultado-aviso">{cierre}</p>
               ) : (
                 <button type="button" className="panel-boton panel-boton-borde" onClick={reportar}>
                   Reportar este sitio
                 </button>
-              ))}
-            <button type="button" className="panel-boton" onClick={compartir}>
-              Mandale esto a tu mamá
-            </button>
-          </div>
+              )}
+            </div>
+          )}
         </Resultado>
       )}
 
