@@ -257,7 +257,7 @@ function PanelCampanas() {
       return
     }
 
-    const { data: mail } = await supabase.functions.invoke(
+    const { data: mail, error: falloMail } = await supabase.functions.invoke(
       'phishguard-avisar-campana',
       {
         body: { campana_id: id, origen: window.location.origin },
@@ -276,8 +276,9 @@ function PanelCampanas() {
           `mailto:${correo}?subject=${encodeURIComponent(`Campaña lista: ${creada.nombre_campana}`)}&body=${encodeURIComponent(textoKit(creada))}`,
         )
       }
+      const motivo = mail?.error || falloMail?.message || 'No se pudo enviar por Gmail.'
       setError(
-        `La campaña se creó, pero el correo no salió a ${correo || 'tu cuenta'}: Resend es de pago (hay que verificar un dominio propio; el plan gratis no alcanza). Abrí tu correo con el botón o copiá los enlaces de la lista.`,
+        `La campaña se creó, pero el correo no salió a ${correo || 'tu cuenta'}: ${motivo} Los enlaces quedan en el listado.`,
       )
     }
   }
@@ -337,9 +338,8 @@ function PanelCampanas() {
           Quien cae recibe un refuerzo más difícil a las 3 semanas.
         </p>
         <p className="panel-aviso">
-          El correo automático al crear una campaña no sale con la cuenta gratis de
-          Resend: hay que pagar un dominio propio y verificarlo. Mientras tanto, los
-          enlaces quedan en el listado.
+          Al crear la campaña, los enlaces llegan por correo a la cuenta con la que
+          entraste. También quedan en el listado.
         </p>
       </header>
 

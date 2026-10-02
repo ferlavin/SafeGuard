@@ -1,4 +1,5 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import { SMTPClient } from 'https://deno.land/x/denomailer@1.6.0/mod.ts'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -66,21 +67,44 @@ function mensajeSimulacion(
   return cuerpo
 }
 
-function remitente() {
-  return 'beth.t@example.com'
+function credencialesGmail() {
+  const usuario = (Deno.env.get('GMAIL_USER') ?? '').trim()
+  const clave = (Deno.env.get('GMAIL_APP_PASSWORD') ?? '').replaceAll(/\s/g, '')
+  return { usuario, clave }
 }
 
-async function mandarResend(apiKey: string, from: string, to: string, subject: string, html: string) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+function errorGmail(error: unknown) {
+  const crudo = error instanceof Error ? error.message : 'Gmail rechazó el correo'
+  if (/535|BadCredentials|Username and Password not accepted|Invalid login/i.test(crudo)) {
+    return 'Gmail rechazó la contraseña de aplicación. Revisá GMAIL_USER y GMAIL_APP_PASSWORD en Supabase → Edge Functions → Secrets.'
+  }
+  return crudo
+}
+
+async function mandarGmail(from: string, to: string, subject: string, html: string, text: string) {
+  const { usuario, clave } = credencialesGmail()
+  const client = new SMTPClient({
+    connection: {
+      hostname: 'smtp.gmail.com',
+      port: 465,
+      tls: true,
+      auth: {
+        username: usuario,
+        password: clave,
+      },
     },
-    body: JSON.stringify({ from, to: [to], subject, html }),
   })
-  const data = (await res.json()) as { id?: string; message?: string; name?: string }
-  return { ok: res.ok, status: res.status, data }
+  try {
+    await client.send({
+      from,
+      to,
+      subject,
+      content: text,
+      html,
+    })
+  } finally {
+    await client.close()
+  }
 }
 
 Deno.serve(async (req) => {
@@ -139,27 +163,47 @@ Deno.serve(async (req) => {
         .eq('campana_id', campanaId),
     ])
 
-    const apiKey = Deno.env.get('RESEND_API_KEY')
-    if (!apiKey) {
+    const { usuario, clave } = credencialesGmail()
+    if (!usuario || !clave) {
       return json({
         ok: false,
-        error: 'Falta el secreto RESEND_API_KEY en Supabase → Edge Functions → Secrets.',
+        error:
+          'Faltan los secretos GMAIL_USER y GMAIL_APP_PASSWORD en Supabase → Edge Functions → Secrets.',
       })
     }
 
-    const filas = (eventos ?? [])
-      .map((ev: { token_unico: string; empleados: { nombre?: string; email?: string } | null }) => {
+    const personas = (eventos ?? []).map(
+      (ev: { token_unico: string; empleados: { nombre?: string; email?: string } | null }) => {
         const persona = ev.empleados
         const sim = `${origen}/simulacion/${ev.token_unico}`
         const bien = `${origen}/bien/${ev.token_unico}`
         const mensaje = mensajeSimulacion(campana.canal, plantilla, sim)
-        return `<tr>
-          <td>${esc(persona?.nombre ?? 'Empleado')}<br/><span style="color:#667085">${esc(persona?.email ?? '')}</span></td>
-          <td><a href="${esc(sim)}">${esc(sim)}</a><pre style="white-space:pre-wrap;font-family:inherit">${esc(mensaje)}</pre></td>
-          <td><a href="${esc(bien)}">${esc(bien)}</a></td>
-        </tr>`
-      })
+        return {
+          nombre: persona?.nombre ?? 'Empleado',
+          email: persona?.email ?? '',
+          sim,
+          bien,
+          mensaje,
+        }
+      },
+    )
+
+    const filas = personas
+      .map(
+        (persona) => `<tr>
+          <td>${esc(persona.nombre)}<br/><span style="color:#667085">${esc(persona.email)}</span></td>
+          <td><a href="${esc(persona.sim)}">${esc(persona.sim)}</a><pre style="white-space:pre-wrap;font-family:inherit">${esc(persona.mensaje)}</pre></td>
+          <td><a href="${esc(persona.bien)}">${esc(persona.bien)}</a></td>
+        </tr>`,
+      )
       .join('')
+
+    const texto = personas
+      .map(
+        (persona) =>
+          `${persona.nombre} ${persona.email}\nSimulación: ${persona.sim}\nLo hiciste bien: ${persona.bien}\n${persona.mensaje}`,
+      )
+      .join('\n\n')
 
     const html = `
       <p>Se creó la campaña <strong>${esc(campana.nombre_campana)}</strong> (${esc(campana.canal)}).</p>
@@ -170,38 +214,24 @@ Deno.serve(async (req) => {
       </table>
     `
 
-    const from = remitente()
+    const from = `PhishGuard <${usuario}>`
     const destino = user.email
+    const asunto = `Campaña lista: ${campana.nombre_campana}`
+    const plano = [
+      `Se creó la campaña ${campana.nombre_campana} (${campana.canal}).`,
+      'El enlace de simulación es el cebo. El de “lo hiciste bien” es para quien no tocó el enlace.',
+      '',
+      texto || 'Sin destinatarios.',
+    ].join('\n')
 
-    const envio = await mandarResend(
-      apiKey,
-      from,
-      destino,
-      `Campaña lista: ${campana.nombre_campana}`,
-      html,
-    )
-
-    console.log(
-      JSON.stringify({
-        destino,
-        from,
-        campana: campanaId,
-        resend_status: envio.status,
-      }),
-    )
-
-    if (!envio.ok) {
-      const crudo = envio.data.message ?? 'Resend rechazó el correo'
-      const bloqueo =
-        /testing emails|own email|resend\.dev|domain is not verified|example\.com/i.test(crudo)
-      return json({
-        ok: false,
-        error: bloqueo
-          ? `Resend es de pago para enviar correos. El plan gratis no manda a ${destino}: hace falta un dominio propio verificado (no Da Vinci ni example.com).`
-          : crudo,
-      })
+    try {
+      await mandarGmail(from, destino, asunto, html, plano)
+    } catch (error) {
+      console.log(JSON.stringify({ destino, from: usuario, campana: campanaId, ok: false }))
+      return json({ ok: false, error: errorGmail(error) })
     }
 
+    console.log(JSON.stringify({ destino, from: usuario, campana: campanaId, ok: true }))
     return json({ ok: true, destino })
   } catch (error) {
     console.error(error)
