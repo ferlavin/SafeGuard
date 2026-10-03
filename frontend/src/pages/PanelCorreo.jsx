@@ -31,9 +31,14 @@ function PanelCorreo() {
   return (
     <div className="panel panel-personas">
       <header className="panel-header">
-        <Link className="panel-volver" to="/panel">
-          ← Volver al panel
-        </Link>
+        <div className="panel-nav">
+          <Link className="panel-volver" to="/panel">
+            ← Volver al panel
+          </Link>
+          <Link className="panel-volver" to="/panel/historial">
+            Historial
+          </Link>
+        </div>
         <span className="panel-tag">SafeLink</span>
         <h1>Revisar un correo</h1>
         <p className="panel-lead">

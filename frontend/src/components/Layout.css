@@ -30,6 +30,20 @@
   min-height: 72px;
 }
 
+.header-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lectura-toggle[aria-pressed='true'] {
+  border-color: var(--sg-text);
+  background: var(--sg-text);
+  color: var(--sg-bg);
+}
+
 .brand {
   display: inline-flex;
   align-items: center;

@@ -1,0 +1,47 @@
+.marca-nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--sg-text);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.marca-icono {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+}
+
+.marca-verde .marca-icono {
+  color: var(--sg-green);
+}
+
+.marca-amarillo .marca-icono {
+  color: var(--sg-yellow);
+}
+
+.marca-rojo .marca-icono {
+  color: var(--sg-red);
+}
+
+.marca-detalle {
+  font-weight: 500;
+  color: var(--sg-muted);
+}
+
+.marca-detalle::before {
+  content: '·';
+  margin-right: 8px;
+}
+
+.marca-compacta {
+  gap: 6px;
+  font-size: 13px;
+}
+
+.marca-compacta .marca-icono {
+  width: 18px;
+  height: 18px;
+}

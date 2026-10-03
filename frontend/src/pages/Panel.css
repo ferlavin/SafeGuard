@@ -40,6 +40,17 @@
   transition: color var(--sg-ease);
 }
 
+.panel-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.panel-nav .panel-volver {
+  margin-bottom: 0;
+}
+
 .panel-volver:hover {
   color: color-mix(in srgb, var(--sg-accent) 75%, white);
 }
@@ -239,8 +250,21 @@
   padding: 20px;
   border-radius: var(--sg-radius);
   border: 1px solid var(--sg-line);
+  border-left-width: 4px;
   background: var(--sg-surface);
   margin-bottom: 28px;
+}
+
+.resultado.nivel-verde {
+  border-left-color: var(--sg-green);
+}
+
+.resultado.nivel-amarillo {
+  border-left-color: var(--sg-yellow);
+}
+
+.resultado.nivel-rojo {
+  border-left-color: var(--sg-red);
 }
 
 .resultado-semaforo {
@@ -250,25 +274,6 @@
   margin: 0 0 6px;
   font-weight: 700;
   font-size: 18px;
-}
-
-.resultado-punto {
-  flex: 0 0 auto;
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  background: var(--sg-green);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--sg-green) 45%, transparent);
-}
-
-.resultado.nivel-amarillo .resultado-punto {
-  background: var(--sg-yellow);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--sg-yellow) 45%, transparent);
-}
-
-.resultado.nivel-rojo .resultado-punto {
-  background: var(--sg-red);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--sg-red) 45%, transparent);
 }
 
 .resultado-sub {
@@ -308,25 +313,47 @@
   border: 1px solid var(--sg-line);
 }
 
-.historial-punto {
-  width: 10px;
-  height: 10px;
-  margin-top: 6px;
-  border-radius: 50%;
-  background: var(--sg-green);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--sg-green) 40%, transparent);
+.historial-item .marca-nivel {
+  flex: 0 0 auto;
+  margin-top: 2px;
 }
 
-.historial-item.nivel-amarillo .historial-punto,
-.reporte-item.nivel-amarillo .historial-punto {
-  background: var(--sg-yellow);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--sg-yellow) 40%, transparent);
+.historial-caso {
+  display: block;
 }
 
-.historial-item.nivel-rojo .historial-punto,
-.reporte-item.nivel-rojo .historial-punto {
-  background: var(--sg-red);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--sg-red) 40%, transparent);
+.historial-abrir {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.historial-abrir .historial-url,
+.historial-abrir .historial-meta {
+  display: block;
+}
+
+.historial-abrir > span {
+  min-width: 0;
+}
+
+.historial-detalle {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--sg-line);
+}
+
+.historial-detalle p {
+  margin: 0;
+  color: var(--sg-muted);
 }
 
 .historial-url,

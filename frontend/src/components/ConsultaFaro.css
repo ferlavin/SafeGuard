@@ -1,0 +1,118 @@
+.faro {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--sg-line);
+}
+
+.faro-cabeza h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.faro-cabeza p {
+  margin: 4px 0 12px;
+  color: var(--sg-muted);
+  font-size: 14px;
+}
+
+.faro-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.faro-sugerencias button {
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--sg-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--sg-text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.faro-sugerencias button:hover {
+  border-color: rgb(255 255 255 / 28%);
+}
+
+.faro-chat {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.faro-chat li {
+  max-width: 36rem;
+  padding: 10px 12px;
+  border-radius: var(--sg-radius-sm);
+}
+
+.faro-chat span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sg-muted);
+}
+
+.faro-chat p {
+  margin: 0;
+}
+
+.faro-msg-faro {
+  background: color-mix(in srgb, var(--sg-accent) 16%, var(--sg-surface));
+}
+
+.faro-msg-vos {
+  margin-left: auto;
+  background: var(--sg-surface);
+  border: 1px solid var(--sg-line);
+}
+
+.faro-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+}
+
+.faro-campo {
+  flex: 1 1 16rem;
+  display: grid;
+  gap: 6px;
+}
+
+.faro-etiqueta {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.faro-campo input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--sg-line);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-bg);
+  color: var(--sg-text);
+  font: inherit;
+}
+
+.faro-form .panel-boton {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--sg-radius-sm);
+  cursor: pointer;
+}

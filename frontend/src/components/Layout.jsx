@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router'
 import { supabase } from '../lib/supabase.js'
 import { useSesion } from '../lib/useSesion.js'
+import { useLectura } from './LecturaAmplia.jsx'
 import './Layout.css'
 
 function ShieldMark() {
@@ -27,6 +28,7 @@ function ShieldMark() {
 
 function Layout() {
   const { sesion } = useSesion()
+  const { activa, alternar } = useLectura()
 
   return (
     <div className="page">
@@ -37,25 +39,35 @@ function Layout() {
             SafeGuard
           </Link>
 
-          {sesion ? (
-            <div className="sesion">
-              <Link className="login-link" to="/panel">
-                Mi panel
+          <div className="header-acciones">
+            <button
+              type="button"
+              className="login-link lectura-toggle"
+              aria-pressed={activa}
+              onClick={alternar}
+            >
+              Texto grande
+            </button>
+            {sesion ? (
+              <div className="sesion">
+                <Link className="login-link" to="/panel">
+                  Mi panel
+                </Link>
+                <span className="sesion-correo">{sesion.user.email}</span>
+                <button
+                  type="button"
+                  className="login-link"
+                  onClick={() => supabase.auth.signOut()}
+                >
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <Link className="login-link" to="/ingresar">
+                Ingresar
               </Link>
-              <span className="sesion-correo">{sesion.user.email}</span>
-              <button
-                type="button"
-                className="login-link"
-                onClick={() => supabase.auth.signOut()}
-              >
-                Salir
-              </button>
-            </div>
-          ) : (
-            <Link className="login-link" to="/ingresar">
-              Ingresar
-            </Link>
-          )}
+            )}
+          </div>
         </div>
       </header>
 

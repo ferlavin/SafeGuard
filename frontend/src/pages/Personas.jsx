@@ -1,21 +1,20 @@
 import { Link } from 'react-router'
+import MarcaNivel from '../components/MarcaNivel.jsx'
+import '../components/MarcaNivel.css'
 import './Modulo.css'
 
 const semaforo = [
   {
     nivel: 'verde',
-    titulo: 'Verde',
     texto: 'No aparecieron señales de riesgo. Podés continuar.',
   },
   {
     nivel: 'amarillo',
-    titulo: 'Amarillo',
     texto:
       'Hay algo raro: por ejemplo, el dominio se creó hace pocos días. Revisá antes de seguir.',
   },
   {
     nivel: 'rojo',
-    titulo: 'Rojo',
     texto:
       'Fuentes de reputación marcaron esta página como peligrosa. No la abras.',
   },
@@ -40,7 +39,7 @@ const donde = [
   {
     titulo: 'Con cuenta, tu historial',
     texto:
-      'Cada análisis queda guardado en "Mis enlaces" para consultarlo o reportarlo. Sin cuenta, el chequeo no se guarda.',
+      'Cada análisis de un enlace, un WhatsApp, un correo o un PDF queda en el historial. Sin cuenta, el chequeo no se guarda.',
   },
 ]
 
@@ -61,7 +60,7 @@ function Personas() {
         <h2>El semáforo</h2>
         <p className="modulo-texto">
           En vez de mostrarte el resultado de decenas de motores técnicos,
-          SafeLink responde con un color y un motivo entendible.
+          SafeLink responde con una palabra, un ícono y un color, más el motivo.
         </p>
         <div className="semaforo">
           {semaforo.map((item) => (
@@ -69,8 +68,9 @@ function Personas() {
               className={`semaforo-item semaforo-${item.nivel}`}
               key={item.nivel}
             >
-              <span className="semaforo-punto" aria-hidden="true" />
-              <h3>{item.titulo}</h3>
+              <h3>
+                <MarcaNivel nivel={item.nivel} />
+              </h3>
               <p>{item.texto}</p>
             </article>
           ))}

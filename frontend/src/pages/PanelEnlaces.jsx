@@ -5,6 +5,8 @@ import { useSesion } from '../lib/useSesion.js'
 import { analizar, combinarConAmenaza, combinarConEnriquecimiento } from '../lib/analisis.js'
 import { consultarAmenaza, enriquecer, guardarAnalisis, reportarDominio } from '../lib/enriquecer.js'
 import Resultado from '../components/Resultado.jsx'
+import MarcaNivel from '../components/MarcaNivel.jsx'
+import '../components/MarcaNivel.css'
 import './Panel.css'
 
 const COLUMNAS = 'id, url_analizada, dominio, nivel_riesgo, explicacion, fecha_analisis'
@@ -136,9 +138,14 @@ function PanelEnlaces() {
   return (
     <div className="panel panel-personas">
       <header className="panel-header">
-        <Link className="panel-volver" to="/panel">
-          ← Volver al panel
-        </Link>
+        <div className="panel-nav">
+          <Link className="panel-volver" to="/panel">
+            ← Volver al panel
+          </Link>
+          <Link className="panel-volver" to="/panel/historial">
+            Historial
+          </Link>
+        </div>
         <span className="panel-tag">SafeLink</span>
         <h1>Revisar un enlace</h1>
         <p className="panel-lead">
@@ -194,7 +201,7 @@ function PanelEnlaces() {
           <ul className="historial">
             {historial.map((item) => (
               <li className={`historial-item nivel-${item.nivel_riesgo}`} key={item.id}>
-                <span className="historial-punto" aria-hidden="true" />
+                <MarcaNivel nivel={item.nivel_riesgo} compacto />
                 <div>
                   <p className="historial-url">{item.url_analizada}</p>
                   <p className="historial-meta">

@@ -40,6 +40,11 @@ const safelink = [
     titulo: 'Revisar un correo',
     texto: 'Pegá los encabezados. Miramos SPF, DKIM y si el remitente miente.',
   },
+  {
+    to: '/panel/historial',
+    titulo: 'Historial',
+    texto: 'Enlaces, WhatsApp, correos y PDF que ya revisaste, para volver a un caso.',
+  },
 ]
 
 function Panel() {

@@ -10,6 +10,7 @@ import PanelEnlaces from './pages/PanelEnlaces.jsx'
 import PanelWhatsapp from './pages/PanelWhatsapp.jsx'
 import PanelPdf from './pages/PanelPdf.jsx'
 import PanelCorreo from './pages/PanelCorreo.jsx'
+import PanelHistorial from './pages/PanelHistorial.jsx'
 import Compartido from './pages/Compartido.jsx'
 import PanelEmpresa from './pages/PanelEmpresa.jsx'
 import PanelCampanas from './pages/PanelCampanas.jsx'
@@ -36,6 +37,7 @@ function App() {
           <Route path="whatsapp" element={<PanelWhatsapp />} />
           <Route path="pdf" element={<PanelPdf />} />
           <Route path="correo" element={<PanelCorreo />} />
+          <Route path="historial" element={<PanelHistorial />} />
           <Route path="empresa" element={<PanelEmpresa />} />
           <Route path="campanas" element={<PanelCampanas />} />
           <Route path="tablero" element={<PanelTablero />} />

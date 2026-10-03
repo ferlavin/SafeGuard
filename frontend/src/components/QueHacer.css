@@ -1,0 +1,23 @@
+.que-hacer {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--sg-radius-sm);
+  background: color-mix(in srgb, var(--sg-red) 12%, var(--sg-surface));
+  border: 1px solid color-mix(in srgb, var(--sg-red) 35%, var(--sg-line));
+}
+
+.que-hacer h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.que-hacer ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 6px;
+}
+
+.que-hacer li {
+  color: var(--sg-text);
+}

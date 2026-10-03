@@ -82,6 +82,22 @@ a {
   outline-offset: 3px;
 }
 
+html.lectura-amplia {
+  --sg-bg: #05070d;
+  --sg-surface: #101722;
+  --sg-text: #ffffff;
+  --sg-muted: #d7deea;
+  --sg-line: rgb(255 255 255 / 34%);
+  --sg-green: #5ddea3;
+  --sg-yellow: #ffd15c;
+  --sg-red: #ff9b8a;
+}
+
+html.lectura-amplia body {
+  zoom: 1.15;
+  line-height: 1.6;
+}
+
 input,
 textarea,
 select,

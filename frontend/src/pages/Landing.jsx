@@ -30,8 +30,8 @@ function Landing() {
           <span className="door-tag">Personas</span>
           <h2 className="door-title">SafeLink</h2>
           <p className="door-text">
-            Pegá un enlace o escaneá un código QR. Semáforo verde, amarillo o
-            rojo con una explicación simple.
+            Pegá un enlace o escaneá un código QR. El resultado dice Seguro,
+            Dudoso o Peligroso, con un ícono y un color.
           </p>
           <p className="door-meta">
             Gratis para siempre · Cuenta opcional para el historial

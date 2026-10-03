@@ -30,7 +30,7 @@ export async function consultarAmenaza(dominio) {
 export async function guardarAnalisis(sesion, resultado, entrada) {
   return supabase.from('safelink_analisis').insert({
     usuario_id: sesion.user.id,
-    url_analizada: resultado.url,
+    url_analizada: (resultado.resumen || resultado.url || '').slice(0, 280),
     dominio: resultado.dominioDestino ?? resultado.dominio,
     nivel_riesgo: resultado.nivel,
     explicacion: resultado.motivos.join(' '),
