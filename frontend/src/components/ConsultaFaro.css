@@ -4,6 +4,74 @@
   border-top: 1px solid var(--sg-line);
 }
 
+.faro-abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 18px 6px 10px;
+  border: 0;
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-accent);
+  color: var(--sg-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.faro-abrir .faro-robot {
+  width: 36px;
+}
+
+.faro-abrir:hover {
+  background: color-mix(in srgb, var(--sg-accent) 82%, white);
+}
+
+.faro-cuerpo {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.faro-robot {
+  display: block;
+  width: 76px;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+.faro-robot-piensa .faro-visor {
+  animation: faro-parpadeo 1s ease-in-out infinite;
+}
+
+@keyframes faro-parpadeo {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faro-robot-piensa .faro-visor {
+    animation: none;
+  }
+}
+
+.faro-dialogo {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 560px) {
+  .faro-cuerpo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .faro-cuerpo .faro-robot {
+    width: 56px;
+  }
+}
+
 .faro-cabeza h3 {
   margin: 0;
   font-size: 16px;
@@ -36,6 +104,18 @@
 
 .faro-sugerencias button:hover {
   border-color: rgb(255 255 255 / 28%);
+}
+
+.faro-sugerencias button:disabled,
+.faro-form .panel-boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.faro-espera {
+  margin: 0 0 12px;
+  color: var(--sg-muted);
+  font-size: 14px;
 }
 
 .faro-chat {
