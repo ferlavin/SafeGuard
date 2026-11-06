@@ -16,7 +16,9 @@ function Carrusel({ items, etiqueta }) {
       const total = items.length
       const destino = ((indice % total) + total) % total
       const slide = pista.children[destino]
-      if (slide) pista.scrollTo({ left: slide.offsetLeft - pista.offsetLeft, behavior: 'smooth' })
+      if (!slide) return
+      const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      pista.scrollTo({ left: slide.offsetLeft - pista.offsetLeft, behavior: reducido ? 'auto' : 'smooth' })
     },
     [items.length],
   )
