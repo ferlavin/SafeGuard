@@ -6,7 +6,8 @@ const INTERVALO = 6500
 function Carrusel({ items, etiqueta }) {
   const pistaRef = useRef(null)
   const [actual, setActual] = useState(0)
-  const [pausado, setPausado] = useState(false)
+  const [encima, setEncima] = useState(false)
+  const [enfocado, setEnfocado] = useState(false)
   const [visible, setVisible] = useState(false)
 
   const irA = useCallback(
@@ -52,10 +53,10 @@ function Carrusel({ items, etiqueta }) {
 
   useEffect(() => {
     const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (pausado || !visible || reducido) return undefined
+    if (encima || enfocado || !visible || reducido) return undefined
     const id = window.setTimeout(() => irA(actual + 1), INTERVALO)
     return () => window.clearTimeout(id)
-  }, [actual, pausado, visible, irA])
+  }, [actual, encima, enfocado, visible, irA])
 
   function alTeclado(evento) {
     if (evento.key === 'ArrowRight') {
@@ -73,10 +74,12 @@ function Carrusel({ items, etiqueta }) {
       role="region"
       aria-roledescription="carrusel"
       aria-label={etiqueta}
-      onMouseEnter={() => setPausado(true)}
-      onMouseLeave={() => setPausado(false)}
-      onFocus={() => setPausado(true)}
-      onBlur={() => setPausado(false)}
+      onMouseEnter={() => setEncima(true)}
+      onMouseLeave={() => setEncima(false)}
+      onFocus={() => setEnfocado(true)}
+      onBlur={(evento) => {
+        if (!evento.currentTarget.contains(evento.relatedTarget)) setEnfocado(false)
+      }}
       onKeyDown={alTeclado}
     >
       <div className="carrusel-pista" ref={pistaRef} tabIndex={0}>
@@ -124,7 +127,7 @@ function Carrusel({ items, etiqueta }) {
               key={item.titulo}
               aria-label={`Ir a ${i + 1}: ${item.titulo}`}
               aria-current={i === actual ? 'true' : undefined}
-              className={i === actual && !pausado && visible ? 'corriendo' : undefined}
+              className={i === actual && !encima && !enfocado && visible ? 'corriendo' : undefined}
               style={{ '--duracion': `${INTERVALO}ms` }}
               onClick={() => irA(i)}
             />
