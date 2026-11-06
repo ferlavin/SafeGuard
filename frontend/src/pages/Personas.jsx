@@ -73,6 +73,18 @@ function Personas() {
                 Crear una cuenta
               </Link>
             )}
+            <figure className="sl-foto">
+              <img
+                src="/img/personas-celular.webp"
+                alt="Joven caminando por la calle mientras mira el celular"
+                loading="lazy"
+                width="640"
+                height="800"
+              />
+              <figcaption>
+                <span aria-hidden="true">✓</span> Verde · podés continuar
+              </figcaption>
+            </figure>
           </aside>
 
           <div className="sl-cuerpo">

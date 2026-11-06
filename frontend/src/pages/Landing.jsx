@@ -1,6 +1,99 @@
 import { Link } from 'react-router'
+import Carrusel from '../components/Carrusel.jsx'
 import Marco from '../components/Marco.jsx'
 import { useSesion } from '../lib/useSesion.js'
+
+const escenarios = [
+  {
+    canal: 'WhatsApp',
+    foto: '/img/escenario-whatsapp.webp',
+    alt: 'Mujer leyendo un mensaje en el celular',
+    remitente: '+54 9 11 ••••-4821',
+    mensaje: 'Tu paquete no pudo entregarse. Confirmá la dirección y pagá $1.250 de reenvío hoy.',
+    url: 'entregas-paquete-ar.top/pago',
+    nivel: 'rojo',
+    titulo: 'Rojo: no lo abras',
+    explicacion: 'Dominio creado hace 3 días y marcado por fuentes de reputación. El apuro es parte del engaño.',
+  },
+  {
+    canal: 'Correo',
+    foto: '/img/escenario-banco.webp',
+    alt: 'Persona revisando el correo en la computadora con el celular en la mano',
+    remitente: 'Seguridad Homebanking',
+    mensaje: 'Detectamos un acceso inusual. Tu cuenta será suspendida en 24 horas si no verificás tus datos.',
+    url: 'homebanking-verificacion.com',
+    nivel: 'rojo',
+    titulo: 'Rojo: imita a tu banco',
+    explicacion: 'El nombre se parece al de un banco real, pero el dominio no le pertenece y pide la clave.',
+  },
+  {
+    canal: 'Código QR',
+    foto: '/img/escenario-qr.webp',
+    alt: 'Celular escaneando un código QR en un local',
+    remitente: 'Cartel en la mesa',
+    mensaje: 'Escaneá para ver el menú y pagar sin esperar.',
+    url: 'menu-pago.app/l/8f3k',
+    nivel: 'amarillo',
+    titulo: 'Amarillo: revisá antes',
+    explicacion: 'El acortador oculta el destino final. SafeLink lo sigue y te muestra a dónde lleva.',
+  },
+  {
+    canal: 'SMS',
+    foto: '/img/escenario-premio.webp',
+    alt: 'Mujer mayor con una tarjeta de crédito y el celular',
+    remitente: 'PROMO',
+    mensaje: '¡Felicitaciones! Ganaste un vale de $50.000. Cargá tu tarjeta para recibirlo.',
+    url: 'premios-clientes.click',
+    nivel: 'rojo',
+    titulo: 'Rojo: nadie regala así',
+    explicacion: 'Pide la tarjeta para entregar un premio que nunca existió. Clásico de la región.',
+  },
+  {
+    canal: 'Correo interno',
+    foto: '/img/escenario-jefe.webp',
+    alt: 'Hombre trabajando en su escritorio frente a la computadora',
+    remitente: 'Gerencia (desde Gmail)',
+    mensaje: 'Necesito que hagas una transferencia urgente a este proveedor. No me llames, estoy en reunión.',
+    url: 'gerencia.empresa@gmail.com',
+    nivel: 'amarillo',
+    titulo: 'Amarillo: confirmá por otro canal',
+    explicacion: 'Urgencia, secreto y un correo personal: las tres señales que PhishGuard entrena a ver.',
+  },
+  {
+    canal: 'WhatsApp',
+    foto: '/img/escenario-turno.webp',
+    alt: 'Mujer sonriendo mientras usa el celular en un café',
+    remitente: 'Centro médico',
+    mensaje: 'Te recordamos tu turno del jueves a las 10:30. Podés ver los detalles acá.',
+    url: 'turnos.centromedico.com.ar',
+    nivel: 'verde',
+    titulo: 'Verde: podés seguir',
+    explicacion: 'Dominio con años de antigüedad, certificado válido y sin reportes. Así se ve uno sano.',
+  },
+]
+
+const canales = ['Enlaces', 'WhatsApp', 'Códigos QR', 'Correos', 'PDF', 'SMS', 'Redes sociales']
+
+const publicos = [
+  {
+    foto: '/img/publico-pymes.webp',
+    alt: 'Dos personas revisando juntas una computadora en la oficina',
+    titulo: 'PyMEs',
+    texto: 'Equipos chicos sin área de seguridad que igual reciben ataques todos los días.',
+  },
+  {
+    foto: '/img/publico-escuelas.webp',
+    alt: 'Docente dando clase frente a estudiantes',
+    titulo: 'Instituciones educativas',
+    texto: 'Docentes, administración y estudiantes aprenden a frenar antes del clic.',
+  },
+  {
+    foto: '/img/publico-personas.webp',
+    alt: 'Pareja de adultos mayores mirando juntos un celular',
+    titulo: 'Personas y familias',
+    texto: 'SafeLink gratis para revisar ese enlace raro que llegó al grupo de la familia.',
+  },
+]
 
 function Landing() {
   const { sesion } = useSesion()
@@ -105,6 +198,18 @@ function Landing() {
           </a>
         </section>
 
+        <div className="canales" aria-label="Qué revisa SafeGuard">
+          <div className="canales-pista">
+            {[0, 1].map((copia) => (
+              <ul key={copia} aria-hidden={copia === 1 ? 'true' : undefined}>
+                {canales.map((canal) => (
+                  <li key={canal}>{canal}</li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </div>
+
         <section className="intro section-pad" id="solucion">
           <div className="container intro-heading">
             <div className="eyebrow">La solución</div>
@@ -157,6 +262,21 @@ function Landing() {
                 Ver PhishGuard <span>→</span>
               </Link>
             </article>
+          </div>
+        </section>
+
+        <section className="escenarios section-pad" id="escenarios">
+          <div className="container section-heading">
+            <div>
+              <div className="eyebrow">Engaños que circulan</div>
+              <h2>
+                Así se ve un ataque. <em>Así responde SafeGuard.</em>
+              </h2>
+            </div>
+            <p>Ejemplos ilustrativos basados en estafas comunes de la región.</p>
+          </div>
+          <div className="container">
+            <Carrusel items={escenarios} etiqueta="Ejemplos de engaños y cómo los clasifica SafeLink" />
           </div>
         </section>
 
@@ -248,6 +368,24 @@ function Landing() {
                 </div>
               </div>
             </article>
+          </div>
+        </section>
+
+        <section className="publicos section-pad" id="para-quien">
+          <div className="container intro-heading">
+            <div className="eyebrow">Para quién es</div>
+            <h2>Hecho para la gente, no para expertos.</h2>
+          </div>
+          <div className="container publicos-grid">
+            {publicos.map((publico) => (
+              <figure className="publico-card" key={publico.titulo}>
+                <img src={publico.foto} alt={publico.alt} loading="lazy" width="720" height="900" />
+                <figcaption>
+                  <strong>{publico.titulo}</strong>
+                  <span>{publico.texto}</span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
 
