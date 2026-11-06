@@ -4,6 +4,25 @@ import { supabase } from '../lib/supabase.js'
 import { useSesion } from '../lib/useSesion.js'
 import TemaControl from './TemaControl.jsx'
 import '../pages/Landing.css'
+import '../pages/Efectos.css'
+
+const REVELAR = [
+  '.intro-heading',
+  '.section-heading',
+  '.value-card',
+  '.carrusel',
+  '.product-row',
+  '.publico-card',
+  '.process-copy',
+  '.results-box > *',
+  '.contact-box',
+  '.pg-banda',
+  '.pg-bloque > *',
+  '.pg-foto',
+  '.sl-lado > *',
+  '.sl-cuerpo section > *',
+  '.sl-bandas > *',
+].join(',')
 
 function Marca() {
   return (
@@ -23,6 +42,7 @@ function Marca() {
 function Marco({ children, interior = false }) {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [seccionActiva, setSeccionActiva] = useState('')
+  const [desplazado, setDesplazado] = useState(false)
   const { pathname, hash } = useLocation()
   const { sesion } = useSesion()
 
@@ -74,6 +94,43 @@ function Marco({ children, interior = false }) {
   }, [pathname])
 
   useEffect(() => {
+    function alDesplazar() {
+      setDesplazado(window.scrollY > 12)
+    }
+    alDesplazar()
+    window.addEventListener('scroll', alDesplazar, { passive: true })
+    return () => window.removeEventListener('scroll', alDesplazar)
+  }, [])
+
+  useEffect(() => {
+    const nodos = Array.from(document.querySelectorAll(`.sg-landing :is(${REVELAR})`))
+    if (!nodos.length || !('IntersectionObserver' in window)) return undefined
+
+    const observer = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (!entrada.isIntersecting) return
+          entrada.target.dataset.revelar = 'visible'
+          observer.unobserve(entrada.target)
+        })
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+    )
+
+    nodos.forEach((nodo) => {
+      if (nodo.dataset.revelar === 'visible') return
+      if (!nodo.dataset.revelar) {
+        const hermanos = Array.from(nodo.parentElement?.children ?? [])
+        nodo.style.setProperty('--revelar-orden', String(Math.min(hermanos.indexOf(nodo), 5)))
+        nodo.dataset.revelar = 'oculto'
+      }
+      observer.observe(nodo)
+    })
+
+    return () => observer.disconnect()
+  }, [pathname, children])
+
+  useEffect(() => {
     const id = hash.startsWith('#') ? decodeURIComponent(hash.slice(1)) : ''
     const destino = id ? document.getElementById(id) : null
     if (destino) {
@@ -97,7 +154,8 @@ function Marco({ children, interior = false }) {
 
   return (
     <div className="sg-landing">
-      <header className="site-header">
+      <header className="site-header" data-desplazado={desplazado ? 'si' : undefined}>
+        <span className="progreso-lectura" aria-hidden="true" />
         <div className="container nav-wrap">
           <Link to="/" aria-label="SafeGuard, inicio" onClick={cerrarMenu}>
             <Marca />

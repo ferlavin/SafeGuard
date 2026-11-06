@@ -109,6 +109,20 @@ function Empresas() {
           </ol>
         </section>
 
+        <figure className="pg-foto">
+          <img
+            src="/img/empresas-equipo.webp"
+            alt="Equipo de trabajo con computadoras alrededor de una mesa"
+            loading="lazy"
+            width="1600"
+            height="700"
+          />
+          <figcaption>
+            <strong>Sin culpa, con criterio.</strong>
+            <span>Quien cae en la simulación aprende en el momento. Nadie queda expuesto.</span>
+          </figcaption>
+        </figure>
+
         <section className="pg-bloque pg-incluye">
           <h2>Qué queda en la organización</h2>
           <dl>
